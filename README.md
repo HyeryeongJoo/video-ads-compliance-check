@@ -2,6 +2,22 @@
 
 TwelveLabs API를 활용한 크리에이터 영상 광고 컴플라이언스 자동 심사 시스템.
 
+## Demo
+
+아래는 화장품 메이크업 영상을 업로드하여 컴플라이언스 분석을 수행한 실제 결과 화면입니다.
+
+![Analyze Results](img/analyze_results_capture.png)
+
+비디오를 업로드하면 TwelveLabs의 멀티모달 AI가 영상의 시각, 음성, 텍스트를 종합 분석하여:
+
+- **Decision (APPROVE)**: 정책 위반 없이 캠페인 brief에 부합하는 영상으로 판정
+- **Campaign Relevance (90/100)**: 메이크업 튜토리얼/제품 데모로서 높은 관련성 확인
+- **Video Description**: 영상 내용을 2-5문장으로 자동 요약
+- **Decision Explanation**: 광고주에게 제공할 판정 근거를 명확히 서술
+- **Policy Violations (5 categories)**: 5개 정책 카테고리별 위반 여부와 심각도를 개별 표시
+
+위 예시에서는 모든 카테고리가 `NONE`으로 위반 사항이 없어 **APPROVE** 판정이 내려졌습니다.
+
 ## Architecture
 
 - **App**: Streamlit (단일 ECS Fargate 컨테이너)
