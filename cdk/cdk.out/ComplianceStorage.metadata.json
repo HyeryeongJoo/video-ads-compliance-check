@@ -1,0 +1,98 @@
+{
+  "/ComplianceStorage/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/ComplianceStorage/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/ComplianceStorage/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/ComplianceStorage/VideoAssets/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "VideoAssetsEC527575"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/ComplianceStorage/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    }
+  ],
+  "/ComplianceStorage/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    }
+  ],
+  "/ComplianceStorage/ComplianceResults/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceResultsA3DD5A93"
+    }
+  ],
+  "/ComplianceStorage/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/ComplianceStorage/Exports/Output{\"Fn::GetAtt\":[\"VideoAssetsEC527575\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttVideoAssetsEC527575Arn2944C023"
+    }
+  ],
+  "/ComplianceStorage/Exports/Output{\"Fn::GetAtt\":[\"ComplianceResultsA3DD5A93\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttComplianceResultsA3DD5A93Arn7AF6C085"
+    }
+  ],
+  "/ComplianceStorage/Exports/Output{\"Ref\":\"VideoAssetsEC527575\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefVideoAssetsEC52757547561F58"
+    }
+  ],
+  "/ComplianceStorage/Exports/Output{\"Ref\":\"ComplianceResultsA3DD5A93\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefComplianceResultsA3DD5A93535FE8BA"
+    }
+  ],
+  "/ComplianceStorage/VideoAssets/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "VideoAssetsPolicyEDCDE653"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/ComplianceStorage/VideoAssets/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "VideoAssetsAutoDeleteObjectsCustomResourceE25D13B6"
+    }
+  ]
+}

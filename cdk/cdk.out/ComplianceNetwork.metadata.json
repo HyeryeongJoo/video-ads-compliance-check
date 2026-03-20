@@ -1,0 +1,176 @@
+{
+  "/ComplianceNetwork/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/ComplianceNetwork/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpc6075EC3B"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/IGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcIGW602559F8"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/VPCGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcVPCGW720B32A8"
+    }
+  ],
+  "/ComplianceNetwork/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/ComplianceNetwork/Exports/Output{\"Ref\":\"ComplianceVpcPublicSubnet1SubnetD4C72453\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefComplianceVpcPublicSubnet1SubnetD4C7245397E47E78"
+    }
+  ],
+  "/ComplianceNetwork/Exports/Output{\"Ref\":\"ComplianceVpcPublicSubnet2Subnet33BB2FB2\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefComplianceVpcPublicSubnet2Subnet33BB2FB24B9AC4A9"
+    }
+  ],
+  "/ComplianceNetwork/Exports/Output{\"Ref\":\"ComplianceVpc6075EC3B\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefComplianceVpc6075EC3B8727BB01"
+    }
+  ],
+  "/ComplianceNetwork/Exports/Output{\"Ref\":\"ComplianceVpcPrivateSubnet1Subnet27E3DF19\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefComplianceVpcPrivateSubnet1Subnet27E3DF190B2F5A62"
+    }
+  ],
+  "/ComplianceNetwork/Exports/Output{\"Ref\":\"ComplianceVpcPrivateSubnet2SubnetE83A2E97\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefComplianceVpcPrivateSubnet2SubnetE83A2E979B933768"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet1SubnetD4C72453"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet1RouteTableC34EA24B"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet1RouteTableAssociationAA9A331B"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet1DefaultRoute2C15B068"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet1/EIP": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet1EIPB5C7CA33"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet1/NATGateway": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet1NATGateway1CF55C2C"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet2Subnet33BB2FB2"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet2RouteTableDC1057E3"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet2RouteTableAssociation0791C9D7"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PublicSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPublicSubnet2DefaultRoute0C43CB76"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet1Subnet27E3DF19"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet1RouteTableF628053F"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet1RouteTableAssociation38ADB10B"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet1DefaultRouteCA47663E"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet2SubnetE83A2E97"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet2RouteTable15FE0036"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet2RouteTableAssociation8A449214"
+    }
+  ],
+  "/ComplianceNetwork/ComplianceVpc/PrivateSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ComplianceVpcPrivateSubnet2DefaultRouteF14F72F5"
+    }
+  ]
+}

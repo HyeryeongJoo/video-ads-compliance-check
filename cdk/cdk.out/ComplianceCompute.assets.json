@@ -1,0 +1,36 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "1807e972dc9a3f845400ccf9b865d185c5ed5b901f1a5655d50d63894c31d2cd": {
+      "displayName": "ComplianceCompute Template",
+      "source": {
+        "path": "ComplianceCompute.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-us-east-1-815aecd8": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "1807e972dc9a3f845400ccf9b865d185c5ed5b901f1a5655d50d63894c31d2cd.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {
+    "6f3bbf01a0e00c20c7e08a593aed6a8d2a9c3ef7a509d45f0995a59bd6a90761": {
+      "displayName": "AppTask/App/AssetImage",
+      "source": {
+        "directory": "asset.6f3bbf01a0e00c20c7e08a593aed6a8d2a9c3ef7a509d45f0995a59bd6a90761"
+      },
+      "destinations": {
+        "current_account-us-east-1-7b47bafb": {
+          "repositoryName": "cdk-hnb659fds-container-assets-${AWS::AccountId}-us-east-1",
+          "imageTag": "6f3bbf01a0e00c20c7e08a593aed6a8d2a9c3ef7a509d45f0995a59bd6a90761",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-image-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  }
+}

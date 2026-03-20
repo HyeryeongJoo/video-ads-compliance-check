@@ -1,0 +1,32 @@
+{
+  "/ComplianceCdn/AppUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AppUrl"
+    }
+  ],
+  "/ComplianceCdn/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/ComplianceCdn/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/ComplianceCdn/Distribution/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Distribution830FAC52"
+    }
+  ],
+  "/ComplianceCdn/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "dd613c1c22fc39f1995c1fd56547c94f6dad993a274663c7a9d81b08bf059e39": {
+      "displayName": "ComplianceNetwork Template",
+      "source": {
+        "path": "ComplianceNetwork.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-us-east-1-a8453902": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "dd613c1c22fc39f1995c1fd56547c94f6dad993a274663c7a9d81b08bf059e39.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

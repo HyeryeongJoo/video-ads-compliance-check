@@ -1,0 +1,732 @@
+{
+ "Resources": {
+  "ClusterEB0386A7": {
+   "Type": "AWS::ECS::Cluster",
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/Cluster/Resource"
+   }
+  },
+  "AppTaskTaskRole6D8E3660": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppTask/TaskRole/Resource"
+   }
+  },
+  "AppTaskTaskRoleDefaultPolicy11EC590B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "ComplianceStorage:ExportsOutputFnGetAttVideoAssetsEC527575Arn2944C023"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "ComplianceStorage:ExportsOutputFnGetAttVideoAssetsEC527575Arn2944C023"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "ComplianceStorage:ExportsOutputFnGetAttComplianceResultsA3DD5A93Arn7AF6C085"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "ComplianceStorage:ExportsOutputFnGetAttComplianceResultsA3DD5A93Arn7AF6C085"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AppTaskTaskRoleDefaultPolicy11EC590B",
+    "Roles": [
+     {
+      "Ref": "AppTaskTaskRole6D8E3660"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppTask/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "AppTask3BD371F9": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "S3_BUCKET",
+        "Value": {
+         "Fn::ImportValue": "ComplianceStorage:ExportsOutputRefVideoAssetsEC52757547561F58"
+        }
+       },
+       {
+        "Name": "DYNAMODB_TABLE",
+        "Value": {
+         "Fn::ImportValue": "ComplianceStorage:ExportsOutputRefComplianceResultsA3DD5A93535FE8BA"
+        }
+       },
+       {
+        "Name": "AWS_REGION",
+        "Value": "us-east-1"
+       },
+       {
+        "Name": "TWELVELABS_INDEX_NAME",
+        "Value": "ad-compliance"
+       }
+      ],
+      "Essential": true,
+      "Image": {
+       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.us-east-1.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-us-east-1:6f3bbf01a0e00c20c7e08a593aed6a8d2a9c3ef7a509d45f0995a59bd6a90761"
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "AppTaskAppLogGroup2C8E4F77"
+        },
+        "awslogs-stream-prefix": "compliance-app",
+        "awslogs-region": "us-east-1"
+       }
+      },
+      "Name": "App",
+      "PortMappings": [
+       {
+        "ContainerPort": 8501,
+        "Protocol": "tcp"
+       }
+      ],
+      "Secrets": [
+       {
+        "Name": "TWELVELABS_API_KEY",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":secretsmanager:us-east-1:",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":secret:twelvelabs-api-key"
+          ]
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "Cpu": "1024",
+    "EphemeralStorage": {
+     "SizeInGiB": 40
+    },
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "AppTaskExecutionRoleE2BC84DF",
+      "Arn"
+     ]
+    },
+    "Family": "ComplianceComputeAppTask915B26F2",
+    "Memory": "4096",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "AppTaskTaskRole6D8E3660",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppTask/Resource"
+   }
+  },
+  "AppTaskAppLogGroup2C8E4F77": {
+   "Type": "AWS::Logs::LogGroup",
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppTask/App/LogGroup/Resource"
+   }
+  },
+  "AppTaskExecutionRoleE2BC84DF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppTask/ExecutionRole/Resource"
+   }
+  },
+  "AppTaskExecutionRoleDefaultPolicy14384982": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ecr:us-east-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":repository/",
+          {
+           "Fn::Sub": "cdk-hnb659fds-container-assets-${AWS::AccountId}-us-east-1"
+          }
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "ecr:GetAuthorizationToken",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "AppTaskAppLogGroup2C8E4F77",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":secretsmanager:us-east-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":secret:twelvelabs-api-key-??????"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AppTaskExecutionRoleDefaultPolicy14384982",
+    "Roles": [
+     {
+      "Ref": "AppTaskExecutionRoleE2BC84DF"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppTask/ExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "AppServiceLB2EFD717F": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "false"
+     }
+    ],
+    "Scheme": "internet-facing",
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "AppServiceLBSecurityGroupB5DEF339",
+       "GroupId"
+      ]
+     }
+    ],
+    "Subnets": [
+     {
+      "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpcPublicSubnet1SubnetD4C7245397E47E78"
+     },
+     {
+      "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpcPublicSubnet2Subnet33BB2FB24B9AC4A9"
+     }
+    ],
+    "Type": "application"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/LB/Resource"
+   }
+  },
+  "AppServiceLBSecurityGroupB5DEF339": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatically created Security Group for ELB ComplianceComputeAppServiceLB91C5472B",
+    "VpcId": {
+     "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpc6075EC3B8727BB01"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/LB/SecurityGroup/Resource"
+   }
+  },
+  "AppServiceLBSecurityGrouptoComplianceComputeAppServiceSecurityGroup073A1A1B85018E7B08F0": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "AppServiceSecurityGroup8261DDA4",
+      "GroupId"
+     ]
+    },
+    "FromPort": 8501,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "AppServiceLBSecurityGroupB5DEF339",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 8501
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/LB/SecurityGroup/to ComplianceComputeAppServiceSecurityGroup073A1A1B:8501"
+   }
+  },
+  "AppServiceLBSecurityGroupfrompl3b927c5280A66A3B93": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Allow inbound HTTP from CloudFront only",
+    "FromPort": 80,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "AppServiceLBSecurityGroupB5DEF339",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourcePrefixListId": "pl-3b927c52",
+    "ToPort": 80
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/LB/SecurityGroup/from pl-3b927c52:80"
+   }
+  },
+  "AppServiceLBPublicListenerB6FF7149": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "AppServiceLBPublicListenerECSGroup41DB273F"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "AppServiceLB2EFD717F"
+    },
+    "Port": 80,
+    "Protocol": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/LB/PublicListener/Resource"
+   }
+  },
+  "AppServiceLBPublicListenerECSGroup41DB273F": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "HealthCheckPath": "/_stcore/health",
+    "Matcher": {
+     "HttpCode": "200"
+    },
+    "Port": 80,
+    "Protocol": "HTTP",
+    "TargetGroupAttributes": [
+     {
+      "Key": "stickiness.enabled",
+      "Value": "false"
+     }
+    ],
+    "TargetType": "ip",
+    "VpcId": {
+     "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpc6075EC3B8727BB01"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/LB/PublicListener/ECSGroup/Resource"
+   }
+  },
+  "AppService7F8F0CA1": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "ClusterEB0386A7"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "DesiredCount": 1,
+    "EnableECSManagedTags": false,
+    "HealthCheckGracePeriodSeconds": 60,
+    "LaunchType": "FARGATE",
+    "LoadBalancers": [
+     {
+      "ContainerName": "App",
+      "ContainerPort": 8501,
+      "TargetGroupArn": {
+       "Ref": "AppServiceLBPublicListenerECSGroup41DB273F"
+      }
+     }
+    ],
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "AppServiceSecurityGroup8261DDA4",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpcPrivateSubnet1Subnet27E3DF190B2F5A62"
+       },
+       {
+        "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpcPrivateSubnet2SubnetE83A2E979B933768"
+       }
+      ]
+     }
+    },
+    "TaskDefinition": {
+     "Ref": "AppTask3BD371F9"
+    }
+   },
+   "DependsOn": [
+    "AppServiceLBPublicListenerECSGroup41DB273F",
+    "AppServiceLBPublicListenerB6FF7149",
+    "AppTaskTaskRoleDefaultPolicy11EC590B",
+    "AppTaskTaskRole6D8E3660"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/Service/Service"
+   }
+  },
+  "AppServiceSecurityGroup8261DDA4": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "ComplianceCompute/AppService/Service/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Fn::ImportValue": "ComplianceNetwork:ExportsOutputRefComplianceVpc6075EC3B8727BB01"
+    }
+   },
+   "DependsOn": [
+    "AppTaskTaskRoleDefaultPolicy11EC590B",
+    "AppTaskTaskRole6D8E3660"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/Service/SecurityGroup/Resource"
+   }
+  },
+  "AppServiceSecurityGroupfromComplianceComputeAppServiceLBSecurityGroupA71CF3FA8501C2811067": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "FromPort": 8501,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "AppServiceSecurityGroup8261DDA4",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "AppServiceLBSecurityGroupB5DEF339",
+      "GroupId"
+     ]
+    },
+    "ToPort": 8501
+   },
+   "DependsOn": [
+    "AppTaskTaskRoleDefaultPolicy11EC590B",
+    "AppTaskTaskRole6D8E3660"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/Service/SecurityGroup/from ComplianceComputeAppServiceLBSecurityGroupA71CF3FA:8501"
+   }
+  },
+  "AppServiceTaskCountTargetD4FF4F2B": {
+   "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+   "Properties": {
+    "MaxCapacity": 5,
+    "MinCapacity": 1,
+    "ResourceId": {
+     "Fn::Join": [
+      "",
+      [
+       "service/",
+       {
+        "Ref": "ClusterEB0386A7"
+       },
+       "/",
+       {
+        "Fn::GetAtt": [
+         "AppService7F8F0CA1",
+         "Name"
+        ]
+       }
+      ]
+     ]
+    },
+    "RoleARN": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+      ]
+     ]
+    },
+    "ScalableDimension": "ecs:service:DesiredCount",
+    "ServiceNamespace": "ecs"
+   },
+   "DependsOn": [
+    "AppTaskTaskRoleDefaultPolicy11EC590B",
+    "AppTaskTaskRole6D8E3660"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/Service/TaskCount/Target/Resource"
+   }
+  },
+  "AppServiceTaskCountTargetCpuScaling0BB106EE": {
+   "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+   "Properties": {
+    "PolicyName": "ComplianceComputeAppServiceTaskCountTargetCpuScaling4DD38459",
+    "PolicyType": "TargetTrackingScaling",
+    "ScalingTargetId": {
+     "Ref": "AppServiceTaskCountTargetD4FF4F2B"
+    },
+    "TargetTrackingScalingPolicyConfiguration": {
+     "PredefinedMetricSpecification": {
+      "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+     },
+     "TargetValue": 70
+    }
+   },
+   "DependsOn": [
+    "AppTaskTaskRoleDefaultPolicy11EC590B",
+    "AppTaskTaskRole6D8E3660"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/AppService/Service/TaskCount/Target/CpuScaling/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/31R0U7DMAz8Ft6zwMp+ADZASEhM694nL/OCaZZUsQOqqv47SstYNxBPPp/v7JNc6GI20zdX8MkTs6smjra6LQVMpeCTNy0a1u3cJRaMar73R/gI0YLgGrha4J48CQWfBZdM8ALkMY64b2+J8YMMZtMRlgYcbF2/dh6Sl04RHHS7Cq7X9XUZHJkmtwPqFJq4AWYU1otgKozPB7B4l5k80yusA5OE2NwDo3LBsm5fgn2KIdV50RHnVbypQQSjZ31X144M5NAvAXb34MAb3F3kRwcsZFyA3bZXkLcfhW7/dsfh3qgf64gF/bfmiEfzNUSL8hN71ObkhW5LNCmSND+S/4kHG5H5F/3se75TcDoNSQIbcOStbk9/ygF6/zkzlHUEU5G35eA7Pe6M6Dq1Qg4pGlT9z0oBS95m4WuSOkmnlo28BX99q6eFnhZX70w0ickLHVCvhvoFkDwC0soCAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCompute/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AppServiceLoadBalancerDNS940F3CBE": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AppServiceLB2EFD717F",
+     "DNSName"
+    ]
+   }
+  },
+  "AppServiceServiceURLFB5E6390": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "http://",
+      {
+       "Fn::GetAtt": [
+        "AppServiceLB2EFD717F",
+        "DNSName"
+       ]
+      }
+     ]
+    ]
+   }
+  },
+  "AlbDns": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AppServiceLB2EFD717F",
+     "DNSName"
+    ]
+   }
+  },
+  "ExportsOutputFnGetAttAppServiceLB2EFD717FDNSName14EB9851": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AppServiceLB2EFD717F",
+     "DNSName"
+    ]
+   },
+   "Export": {
+    "Name": "ComplianceCompute:ExportsOutputFnGetAttAppServiceLB2EFD717FDNSName14EB9851"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "Resources": {
+  "Distribution830FAC52": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "Comment": "Video Ad Compliance System",
+     "DefaultCacheBehavior": {
+      "AllowedMethods": [
+       "GET",
+       "HEAD",
+       "OPTIONS",
+       "PUT",
+       "PATCH",
+       "POST",
+       "DELETE"
+      ],
+      "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+      "Compress": true,
+      "OriginRequestPolicyId": "216adef6-5c7f-47e4-b989-5492eafa07d3",
+      "TargetOriginId": "ComplianceCdnDistributionOrigin195600113",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "CustomOriginConfig": {
+        "OriginProtocolPolicy": "http-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": {
+        "Fn::ImportValue": "ComplianceCompute:ExportsOutputFnGetAttAppServiceLB2EFD717FDNSName14EB9851"
+       },
+       "Id": "ComplianceCdnDistributionOrigin195600113"
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCdn/Distribution/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/03IwQ5EMBCA4WdxbwflDbjvZvcBpIqYxXTTzkREvLuIi9Of7zdgyhKyxK5Ru27SM7awf9m6Sdk1Nm720g3BE8NeY+SArTB6UtVATx/XeAn/hQ/13nj0lBaQG8hN8ouIOggxLj187p5kvS0ddwAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ComplianceCdn/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AppUrl": {
+   "Description": "CloudFront HTTPS URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "Distribution830FAC52",
+        "DomainName"
+       ]
+      }
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
