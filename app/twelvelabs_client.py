@@ -3,6 +3,7 @@ import re
 import time
 
 from twelvelabs import TwelveLabs
+from twelvelabs.indexes import IndexesCreateRequestModelsItem
 
 from config import settings
 
@@ -63,17 +64,17 @@ class TwelveLabsClient:
 
         indexes = list(self._client.indexes.list())
         for idx in indexes:
-            if idx.name == settings.twelvelabs_index_name:
+            if idx.index_name == settings.twelvelabs_index_name:
                 self._index_id = idx.id
                 return self._index_id
 
         index = self._client.indexes.create(
-            name=settings.twelvelabs_index_name,
+            index_name=settings.twelvelabs_index_name,
             models=[
-                {
-                    "name": "pegasus1.2",
-                    "options": ["visual", "audio"],
-                }
+                IndexesCreateRequestModelsItem(
+                    model_name="pegasus1.2",
+                    model_options=["visual", "audio"],
+                )
             ],
         )
         self._index_id = index.id
@@ -83,7 +84,7 @@ class TwelveLabsClient:
         index_id = self._ensure_index()
         task = self._client.tasks.create(
             index_id=index_id,
-            file=video_path,
+            video_file=video_path,
         )
         if callback:
             callback(f"Video uploaded. Task ID: {task.id}. Waiting for indexing...")
@@ -93,7 +94,7 @@ class TwelveLabsClient:
     def _wait_for_task(self, task, timeout: int = 600, callback=None):
         start = time.time()
         while time.time() - start < timeout:
-            task = self._client.tasks.retrieve(task.id)
+            task = self._client.tasks.retrieve(task_id=task.id)
             if task.status == "ready":
                 if callback:
                     callback("Indexing complete!")
