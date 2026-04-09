@@ -1,6 +1,6 @@
 # Video Ad Compliance & Brand Safety System
 
-Automated compliance review system for creator video ads, powered by the TwelveLabs API.
+Automated compliance review system for creator video ads, powered by the TwelveLabs Python SDK.
 
 ## Demo
 
@@ -20,9 +20,9 @@ In the example above, a `HIGH` severity violation was detected in the Profanity 
 
 ---
 
-## TwelveLabs API Usage
+## TwelveLabs SDK Usage
 
-This system combines three core TwelveLabs APIs to automate the full pipeline: **Video Upload → Multimodal Indexing → Compliance Analysis**.
+This system uses the TwelveLabs Python SDK (`twelvelabs==1.2.2`) to call three core APIs, automating the full pipeline: **Video Upload → Multimodal Indexing → Compliance Analysis**. All API calls are made through the SDK — no direct REST calls.
 
 ### SDK & Import Information
 
@@ -151,7 +151,7 @@ User uploads a video file
 ## Architecture
 
 - **App**: Streamlit (single ECS Fargate container)
-- **Video Analysis**: TwelveLabs API (Index + Task + Analyze)
+- **Video Analysis**: TwelveLabs Python SDK (Index + Task + Analyze)
 - **Storage**: S3 (videos) + DynamoDB (results)
 - **CDN**: CloudFront (HTTPS, ALB restricted to CloudFront IPs only)
 - **IaC**: AWS CDK (Python, 4 stacks)

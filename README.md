@@ -1,6 +1,6 @@
 # Video Ad Compliance & Brand Safety System
 
-TwelveLabs API를 활용한 크리에이터 영상 광고 컴플라이언스 자동 심사 시스템.
+TwelveLabs Python SDK를 활용한 크리에이터 영상 광고 컴플라이언스 자동 심사 시스템.
 
 ## Demo
 
@@ -20,9 +20,9 @@ TwelveLabs API를 활용한 크리에이터 영상 광고 컴플라이언스 자
 
 ---
 
-## TwelveLabs API Usage
+## TwelveLabs SDK Usage
 
-이 시스템은 TwelveLabs의 3가지 핵심 API를 조합하여, **비디오 업로드 → 멀티모달 인덱싱 → 컴플라이언스 분석**의 전체 파이프라인을 자동화합니다.
+이 시스템은 TwelveLabs Python SDK(`twelvelabs==1.2.2`)를 통해 3가지 핵심 API를 호출하여, **비디오 업로드 → 멀티모달 인덱싱 → 컴플라이언스 분석**의 전체 파이프라인을 자동화합니다. 모든 API 호출은 SDK를 통해 이루어지며, 별도의 REST 직접 호출은 없습니다.
 
 ### SDK & Import 정보
 
@@ -151,7 +151,7 @@ result = client.analyze(
 ## Architecture
 
 - **App**: Streamlit (단일 ECS Fargate 컨테이너)
-- **Video Analysis**: TwelveLabs API (Index + Task + Analyze)
+- **Video Analysis**: TwelveLabs Python SDK (Index + Task + Analyze)
 - **Storage**: S3 (videos) + DynamoDB (results)
 - **CDN**: CloudFront (HTTPS, ALB는 CloudFront IP만 허용)
 - **IaC**: AWS CDK (Python, 4 stacks)
