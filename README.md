@@ -47,18 +47,22 @@ client = TwelveLabs(api_key="YOUR_API_KEY")
 
 | 엔드포인트 | SDK 메서드 | 역할 |
 |---|---|---|
-| `GET /indexes` | `client.index.list()` | 기존 인덱스 목록 조회 |
-| `POST /indexes` | `client.index.create()` | 새 인덱스 생성 |
+| `GET /indexes` | `client.indexes.list()` | 기존 인덱스 목록 조회 |
+| `POST /indexes` | `client.indexes.create()` | 새 인덱스 생성 |
 
 **시나리오에서의 역할**: 모든 비디오 분석의 전제 조건인 인덱스를 관리합니다. 인덱스는 비디오가 Pegasus 모델에 의해 임베딩되어 저장되는 논리적 컨테이너로, 시스템 시작 시 `ad-compliance`라는 이름의 인덱스가 존재하는지 확인하고, 없으면 자동으로 생성합니다.
 
 ```python
-index = self._client.index.create(
-    name="ad-compliance",
-    models=[{
-        "name": "pegasus1.2",
-        "options": ["visual", "audio"],
-    }],
+from twelvelabs.indexes import IndexesCreateRequestModelsItem
+
+index = self._client.indexes.create(
+    index_name="ad-compliance",
+    models=[
+        IndexesCreateRequestModelsItem(
+            model_name="pegasus1.2",
+            model_options=["visual", "audio"],
+        )
+    ],
 )
 ```
 
@@ -72,12 +76,12 @@ index = self._client.index.create(
 
 | 엔드포인트 | SDK 메서드 | 역할 |
 |---|---|---|
-| `POST /tasks` | `client.task.create(index_id, file=...)` | 로컬 파일을 업로드하여 인덱싱 |
-| `GET /tasks/{id}` | `client.task.retrieve(task_id)` | 인덱싱 작업 상태 폴링 |
+| `POST /tasks` | `client.tasks.create(index_id, video_file=...)` | 로컬 파일을 업로드하여 인덱싱 |
+| `GET /tasks/{id}` | `client.tasks.retrieve(task_id=...)` | 인덱싱 작업 상태 폴링 |
 
 **시나리오에서의 역할**: 사용자가 제출한 비디오를 TwelveLabs 플랫폼에 전송하고, Pegasus 모델이 비디오의 모든 프레임, 음성, 화면 텍스트를 분석하여 멀티모달 임베딩을 생성할 때까지 대기합니다. 이 단계가 완료되어야 Analyze API로 컴플라이언스 심사가 가능합니다.
 
-**비동기 작업 폴링**: Task API는 비동기로 동작하므로, 5초 간격으로 `task.retrieve()`를 호출하여 `status`가 `ready`가 될 때까지 폴링합니다 (최대 600초 타임아웃). 인덱싱이 완료되면 `video_id`를 반환받아 다음 단계로 전달합니다.
+**비동기 작업 폴링**: Task API는 비동기로 동작하므로, 5초 간격으로 `tasks.retrieve()`를 호출하여 `status`가 `ready`가 될 때까지 폴링합니다 (최대 600초 타임아웃). 인덱싱이 완료되면 `video_id`를 반환받아 다음 단계로 전달합니다.
 
 ### 3. Analyze API — 멀티모달 비디오 컴플라이언스 분석
 

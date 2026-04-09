@@ -47,18 +47,22 @@ client = TwelveLabs(api_key="YOUR_API_KEY")
 
 | Endpoint | SDK Method | Role |
 |---|---|---|
-| `GET /indexes` | `client.index.list()` | List existing indexes |
-| `POST /indexes` | `client.index.create()` | Create a new index |
+| `GET /indexes` | `client.indexes.list()` | List existing indexes |
+| `POST /indexes` | `client.indexes.create()` | Create a new index |
 
 **Role in this system**: Manages the index, which is a prerequisite for all video analysis. An index is a logical container where videos are embedded and stored by the Pegasus model. On system startup, it checks whether an index named `ad-compliance` exists, and creates one automatically if not.
 
 ```python
-index = self._client.index.create(
-    name="ad-compliance",
-    models=[{
-        "name": "pegasus1.2",
-        "options": ["visual", "audio"],
-    }],
+from twelvelabs.indexes import IndexesCreateRequestModelsItem
+
+index = self._client.indexes.create(
+    index_name="ad-compliance",
+    models=[
+        IndexesCreateRequestModelsItem(
+            model_name="pegasus1.2",
+            model_options=["visual", "audio"],
+        )
+    ],
 )
 ```
 
@@ -72,12 +76,12 @@ index = self._client.index.create(
 
 | Endpoint | SDK Method | Role |
 |---|---|---|
-| `POST /tasks` | `client.task.create(index_id, file=...)` | Upload a local file for indexing |
-| `GET /tasks/{id}` | `client.task.retrieve(task_id)` | Poll indexing task status |
+| `POST /tasks` | `client.tasks.create(index_id, video_file=...)` | Upload a local file for indexing |
+| `GET /tasks/{id}` | `client.tasks.retrieve(task_id=...)` | Poll indexing task status |
 
 **Role in this system**: Sends the user-submitted video to the TwelveLabs platform and waits for the Pegasus model to analyze all frames, speech, and on-screen text to generate multimodal embeddings. The Analyze API can only perform compliance review after this step is complete.
 
-**Asynchronous task polling**: The Task API operates asynchronously, so `task.retrieve()` is called every 5 seconds until the `status` becomes `ready` (with a maximum timeout of 600 seconds). Once indexing is complete, the `video_id` is returned and passed to the next step.
+**Asynchronous task polling**: The Task API operates asynchronously, so `tasks.retrieve()` is called every 5 seconds until the `status` becomes `ready` (with a maximum timeout of 600 seconds). Once indexing is complete, the `video_id` is returned and passed to the next step.
 
 ### 3. Analyze API — Multimodal Video Compliance Analysis
 
@@ -148,15 +152,15 @@ User uploads a video file
 
 - **App**: Streamlit (single ECS Fargate container)
 - **Video Analysis**: TwelveLabs API (Index + Task + Analyze)
-- **Storage**: S3 (videos, 7-day lifecycle) + DynamoDB (results, 30-day TTL)
-- **CDN**: CloudFront (HTTPS enforced, ALB restricted to CloudFront IPs only)
+- **Storage**: S3 (videos) + DynamoDB (results)
+- **CDN**: CloudFront (HTTPS, ALB restricted to CloudFront IPs only)
 - **IaC**: AWS CDK (Python, 4 stacks)
 
 ## Quick Start (Local)
 
 ```bash
 cd app
-cp .env.example .env  # Set your TwelveLabs API key
+cp ../backend/.env.example .env  # Set your TwelveLabs API key
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
