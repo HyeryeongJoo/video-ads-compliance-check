@@ -30,7 +30,6 @@ This system uses the TwelveLabs Python SDK (`twelvelabs==1.2.2`) to call three c
 |---|---|
 | **Package** | `twelvelabs` (PyPI) |
 | **Version** | `1.2.2` |
-| **API Version** | `v1.3` |
 | **Install** | `pip install twelvelabs==1.2.2` |
 
 ```python
@@ -89,7 +88,7 @@ index = self._client.indexes.create(
 
 | Endpoint | Method | Role |
 |---|---|---|
-| `POST /v1.3/analyze` | SDK (`client.analyze()`) | Natural language prompt-based multimodal analysis of video |
+| `POST /analyze` | SDK (`client.analyze()`) | Natural language prompt-based multimodal analysis of video |
 
 **Role in this system**: This is the **core API** of the system. It sends a custom compliance prompt for an indexed video, and TwelveLabs comprehensively analyzes the video's **visual**, **speech**, and **text_on_screen** modalities to return a structured compliance report.
 
@@ -137,7 +136,7 @@ User uploads a video file
              ▼
 ┌─────────────────────────┐
 │  3. Analyze API         │  Send compliance prompt
-│     POST /v1.3/analyze  │  → Comprehensive visual/audio/text analysis
+│     client.analyze()    │  → Comprehensive visual/audio/text analysis
 │                         │  → Structured JSON report returned
 └────────────┬────────────┘
              │
