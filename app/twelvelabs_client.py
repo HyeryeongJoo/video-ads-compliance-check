@@ -2,13 +2,9 @@ import json
 import re
 import time
 
-import httpx
 from twelvelabs import TwelveLabs
-from twelvelabs.models.task import Task
 
 from config import settings
-
-API_BASE = "https://api.twelvelabs.io/v1.3"
 
 COMPLIANCE_PROMPT = """You are an expert ad compliance reviewer for a global makeup and cosmetics brand's paid social campaign.
 
@@ -65,13 +61,13 @@ class TwelveLabsClient:
         if self._index_id:
             return self._index_id
 
-        indexes = list(self._client.index.list())
+        indexes = list(self._client.indexes.list())
         for idx in indexes:
             if idx.name == settings.twelvelabs_index_name:
                 self._index_id = idx.id
                 return self._index_id
 
-        index = self._client.index.create(
+        index = self._client.indexes.create(
             name=settings.twelvelabs_index_name,
             models=[
                 {
@@ -84,21 +80,21 @@ class TwelveLabsClient:
         return self._index_id
 
     def index_video(self, video_path: str, callback=None) -> str:
-        index_id = self._ensure_index() # mapping index_id
-        task = self._client.task.create( # start embedding
+        index_id = self._ensure_index()
+        task = self._client.tasks.create(
             index_id=index_id,
-            file=video_path, # upload video to file path
+            file=video_path,
         )
         if callback:
             callback(f"Video uploaded. Task ID: {task.id}. Waiting for indexing...")
         task = self._wait_for_task(task, callback=callback)
         return task.video_id
 
-    def _wait_for_task(self, task: Task, timeout: int = 600, callback=None) -> Task:
+    def _wait_for_task(self, task, timeout: int = 600, callback=None):
         start = time.time()
-        while time.time() - start < timeout: # wait maximum 600sec
-            task = self._client.task.retrieve(task.id) #retrieve status
-            if task.status == "ready": # check if completed
+        while time.time() - start < timeout:
+            task = self._client.tasks.retrieve(task.id)
+            if task.status == "ready":
                 if callback:
                     callback("Indexing complete!")
                 return task
@@ -107,24 +103,16 @@ class TwelveLabsClient:
             if callback:
                 elapsed = int(time.time() - start)
                 callback(f"Indexing in progress... ({elapsed}s)")
-            time.sleep(5) # polling every 5 sec
+            time.sleep(5)
         raise TimeoutError(f"TwelveLabs task timed out: {task.id}")
 
     def analyze_compliance(self, video_id: str) -> dict:
-        """Call /analyze endpoint directly."""
-        resp = httpx.post(
-            f"{API_BASE}/analyze",
-            headers={"x-api-key": settings.twelvelabs_api_key},
-            json={
-                "video_id": video_id,
-                "prompt": COMPLIANCE_PROMPT,
-                "stream": False,
-            },
-            timeout=120,
+        """Call TwelveLabs Analyze API via SDK."""
+        result = self._client.analyze(
+            video_id=video_id,
+            prompt=COMPLIANCE_PROMPT,
         )
-        resp.raise_for_status()
-        data = resp.json()
-        return self._parse_response(data.get("data", ""))
+        return self._parse_response(result.data)
 
     def _parse_response(self, text: str) -> dict:
         cleaned = text.strip()

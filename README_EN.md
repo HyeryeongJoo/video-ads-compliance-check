@@ -29,24 +29,17 @@ This system combines three core TwelveLabs APIs to automate the full pipeline: *
 | Item | Value |
 |---|---|
 | **Package** | `twelvelabs` (PyPI) |
-| **Version** | `0.4.4` |
+| **Version** | `1.2.2` |
 | **API Version** | `v1.3` |
-| **Install** | `pip install twelvelabs==0.4.4` |
+| **Install** | `pip install twelvelabs==1.2.2` |
 
 ```python
-# SDK client (used for Index API and Task API)
 from twelvelabs import TwelveLabs
-from twelvelabs.models.task import Task
 
 client = TwelveLabs(api_key="YOUR_API_KEY")
-
-# Analyze API is not included in the SDK — called directly via httpx REST
-import httpx
 ```
 
-- `TwelveLabs` — Main SDK client. Calls APIs through resource-based namespaces such as `client.index.*`, `client.task.*`
-- `Task` — Return type for `task.create()` / `task.retrieve()`. Provides attributes like `task.id`, `task.status`, `task.video_id`
-- `httpx` — The Analyze API (`POST /v1.3/analyze`) is not directly supported in SDK `0.4.4`, so it is called via REST
+- `TwelveLabs` — Main SDK client. Calls APIs through resource-based namespaces such as `client.indexes.*`, `client.tasks.*`, `client.analyze()`
 
 ### 1. Index API — Video Index Management
 
@@ -92,19 +85,14 @@ index = self._client.index.create(
 
 | Endpoint | Method | Role |
 |---|---|---|
-| `POST /v1.3/analyze` | REST (httpx) | Natural language prompt-based multimodal analysis of video |
+| `POST /v1.3/analyze` | SDK (`client.analyze()`) | Natural language prompt-based multimodal analysis of video |
 
 **Role in this system**: This is the **core API** of the system. It sends a custom compliance prompt for an indexed video, and TwelveLabs comprehensively analyzes the video's **visual**, **speech**, and **text_on_screen** modalities to return a structured compliance report.
 
 ```python
-resp = httpx.post(
-    "https://api.twelvelabs.io/v1.3/analyze",
-    headers={"x-api-key": API_KEY},
-    json={
-        "video_id": video_id,
-        "prompt": COMPLIANCE_PROMPT,
-        "stream": False,
-    },
+result = client.analyze(
+    video_id=video_id,
+    prompt=COMPLIANCE_PROMPT,
 )
 ```
 

@@ -29,24 +29,17 @@ TwelveLabs API를 활용한 크리에이터 영상 광고 컴플라이언스 자
 | 항목 | 값 |
 |---|---|
 | **패키지** | `twelvelabs` (PyPI) |
-| **버전** | `0.4.4` |
+| **버전** | `1.2.2` |
 | **API 버전** | `v1.3` |
-| **설치** | `pip install twelvelabs==0.4.4` |
+| **설치** | `pip install twelvelabs==1.2.2` |
 
 ```python
-# SDK 클라이언트 (Index API, Task API에 사용)
 from twelvelabs import TwelveLabs
-from twelvelabs.models.task import Task
 
 client = TwelveLabs(api_key="YOUR_API_KEY")
-
-# Analyze API는 SDK에 미포함 — httpx로 REST 직접 호출
-import httpx
 ```
 
-- `TwelveLabs` — SDK 메인 클라이언트. `client.index.*`, `client.task.*` 등 리소스별 네임스페이스로 API 호출
-- `Task` — `task.create()` / `task.retrieve()`의 반환 타입. `task.id`, `task.status`, `task.video_id` 등의 속성 제공
-- `httpx` — Analyze API(`POST /v1.3/analyze`)는 SDK `0.4.4`에서 직접 지원하지 않아 REST로 호출
+- `TwelveLabs` — SDK 메인 클라이언트. `client.indexes.*`, `client.tasks.*`, `client.analyze()` 등 리소스별 네임스페이스로 API 호출
 
 ### 1. Index API — 비디오 인덱스 관리
 
@@ -92,19 +85,14 @@ index = self._client.index.create(
 
 | 엔드포인트 | 호출 방식 | 역할 |
 |---|---|---|
-| `POST /v1.3/analyze` | REST (httpx) | 비디오에 대한 자연어 프롬프트 기반 멀티모달 분석 |
+| `POST /v1.3/analyze` | SDK (`client.analyze()`) | 비디오에 대한 자연어 프롬프트 기반 멀티모달 분석 |
 
 **시나리오에서의 역할**: 이 시스템의 **핵심 API**입니다. 인덱싱이 완료된 비디오에 대해 맞춤형 컴플라이언스 프롬프트를 전송하면, TwelveLabs가 비디오의 **시각(visual)**, **음성(speech)**, **화면 텍스트(text_on_screen)** 3가지 모달리티를 종합 분석하여 구조화된 컴플라이언스 리포트를 반환합니다.
 
 ```python
-resp = httpx.post(
-    "https://api.twelvelabs.io/v1.3/analyze",
-    headers={"x-api-key": API_KEY},
-    json={
-        "video_id": video_id,
-        "prompt": COMPLIANCE_PROMPT,
-        "stream": False,
-    },
+result = client.analyze(
+    video_id=video_id,
+    prompt=COMPLIANCE_PROMPT,
 )
 ```
 
