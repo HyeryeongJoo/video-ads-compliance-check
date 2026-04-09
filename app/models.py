@@ -19,12 +19,6 @@ class Severity(str, Enum):
     HIGH = "HIGH"
 
 
-class VideoSource(str, Enum):
-    UPLOAD = "upload"
-    YOUTUBE = "youtube"
-    DIRECT_URL = "direct_url"
-
-
 class Evidence(BaseModel):
     timestamp: str = ""
     description: str = ""
@@ -47,7 +41,6 @@ class CampaignRelevance(BaseModel):
 class ComplianceResult(BaseModel):
     request_id: str
     video_id: str = ""
-    video_source: VideoSource = VideoSource.UPLOAD
     decision: Decision = Decision.REVIEW
     video_description: str = ""
     campaign_relevance: Optional[CampaignRelevance] = None

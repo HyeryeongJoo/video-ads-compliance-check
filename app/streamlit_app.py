@@ -11,11 +11,9 @@ from models import (
     Evidence,
     PolicyViolation,
     Severity,
-    VideoSource,
 )
 from storage import storage
 from twelvelabs_client import tl_client
-from video_input import video_input
 
 st.set_page_config(page_title="Video Ad Compliance Checker", layout="wide")
 st.title("Video Ad Compliance & Brand Safety Checker")
@@ -25,11 +23,10 @@ SEVERITY_COLORS = {"NONE": "green", "LOW": "blue", "MEDIUM": "orange", "HIGH": "
 DECISION_ICONS = {"APPROVE": ":white_check_mark:", "REVIEW": ":warning:", "BLOCK": ":no_entry_sign:"}
 
 
-def _build_result(request_id: str, video_id: str, source: VideoSource, analysis: dict) -> ComplianceResult:
+def _build_result(request_id: str, video_id: str, analysis: dict) -> ComplianceResult:
     return ComplianceResult(
         request_id=request_id,
         video_id=video_id,
-        video_source=source,
         decision=Decision(analysis.get("decision", "REVIEW")),
         video_description=analysis.get("video_description", ""),
         campaign_relevance=CampaignRelevance(**analysis["campaign_relevance"])
@@ -48,11 +45,18 @@ def _build_result(request_id: str, video_id: str, source: VideoSource, analysis:
     )
 
 
-def run_analysis_file(local_path: str, source: VideoSource) -> ComplianceResult:
+def run_analysis(file_bytes: bytes, filename: str) -> ComplianceResult:
     request_id = storage.generate_request_id()
     status = st.empty()
 
     try:
+        status.text("Saving video locally...")
+        ext = os.path.splitext(filename)[1] or ".mp4"
+        local_path = os.path.join("/tmp/videos", f"{request_id}{ext}")
+        os.makedirs("/tmp/videos", exist_ok=True)
+        with open(local_path, "wb") as f:
+            f.write(file_bytes)
+
         status.text("Uploading video to S3...")
         storage.upload_video_to_s3(local_path, request_id)
 
@@ -62,7 +66,7 @@ def run_analysis_file(local_path: str, source: VideoSource) -> ComplianceResult:
         status.text("Running compliance analysis...")
         analysis = tl_client.analyze_compliance(video_id)
 
-        result = _build_result(request_id, video_id, source, analysis)
+        result = _build_result(request_id, video_id, analysis)
         storage.save_result(request_id, result.model_dump(mode="json"))
         status.text("Analysis complete!")
         return result
@@ -71,7 +75,7 @@ def run_analysis_file(local_path: str, source: VideoSource) -> ComplianceResult:
         traceback.print_exc()
         status.error(f"Analysis failed: {e}")
         return ComplianceResult(
-            request_id=request_id, video_source=source,
+            request_id=request_id,
             explanation=f"Error: {e}", status="error",
         )
     finally:
@@ -79,59 +83,12 @@ def run_analysis_file(local_path: str, source: VideoSource) -> ComplianceResult:
             os.remove(local_path)
 
 
-def run_analysis_url(url: str, source: VideoSource) -> ComplianceResult:
-    """Analyze video directly from URL - TwelveLabs fetches the video."""
-    request_id = storage.generate_request_id()
-    status = st.empty()
-
-    try:
-        status.text("Submitting URL to TwelveLabs...")
-        video_id = tl_client.index_video_url(url, callback=lambda msg: status.text(msg))
-
-        status.text("Running compliance analysis...")
-        analysis = tl_client.analyze_compliance(video_id)
-
-        result = _build_result(request_id, video_id, source, analysis)
-        storage.save_result(request_id, result.model_dump(mode="json"))
-        status.text("Analysis complete!")
-        return result
-
-    except Exception as e:
-        traceback.print_exc()
-        status.error(f"Analysis failed: {e}")
-        return ComplianceResult(
-            request_id=request_id, video_source=source,
-            explanation=f"Error: {e}", status="error",
-        )
-
-
 # --- Input Section ---
-tab_upload, tab_url = st.tabs(["File Upload", "Video URL"])
-
 result = None
 
-with tab_upload:
-    uploaded_file = st.file_uploader("Upload a video file", type=["mp4", "mov", "avi", "webm"])
-    if uploaded_file and st.button("Analyze Video", key="btn_upload"):
-        local_path = video_input.save_upload(uploaded_file.getvalue(), uploaded_file.name)
-        result = run_analysis_file(local_path, VideoSource.UPLOAD)
-
-with tab_url:
-    st.info(
-        "Enter a **direct video file URL** (e.g., .mp4 link). "
-        "YouTube/Vimeo page URLs are not supported - use **File Upload** for those."
-    )
-    st.markdown("**Sample URLs for testing:**")
-    sample_urls = [
-        "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
-    ]
-    for s in sample_urls:
-        st.code(s, language=None)
-
-    url_input = st.text_input("Enter direct video URL (.mp4, .mov, .webm)")
-    if url_input and st.button("Analyze Video", key="btn_url"):
-        source = VideoSource.DIRECT_URL
-        result = run_analysis_url(url_input, source)
+uploaded_file = st.file_uploader("Upload a video file", type=["mp4", "mov", "avi", "webm"])
+if uploaded_file and st.button("Analyze Video"):
+    result = run_analysis(uploaded_file.getvalue(), uploaded_file.name)
 
 
 # --- Results Section ---

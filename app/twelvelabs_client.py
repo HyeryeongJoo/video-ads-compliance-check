@@ -84,33 +84,21 @@ class TwelveLabsClient:
         return self._index_id
 
     def index_video(self, video_path: str, callback=None) -> str:
-        index_id = self._ensure_index()
-        task = self._client.task.create(
+        index_id = self._ensure_index() # mapping index_id
+        task = self._client.task.create( # start embedding
             index_id=index_id,
-            file=video_path,
+            file=video_path, # upload video to file path
         )
         if callback:
             callback(f"Video uploaded. Task ID: {task.id}. Waiting for indexing...")
         task = self._wait_for_task(task, callback=callback)
         return task.video_id
 
-    def index_video_url(self, url: str, callback=None) -> str:
-        """Index video directly from URL (YouTube, etc.) - no download needed."""
-        index_id = self._ensure_index()
-        task = self._client.task.create(
-            index_id=index_id,
-            url=url,
-        )
-        if callback:
-            callback(f"URL submitted to TwelveLabs. Task ID: {task.id}. Waiting for indexing...")
-        task = self._wait_for_task(task, callback=callback)
-        return task.video_id
-
     def _wait_for_task(self, task: Task, timeout: int = 600, callback=None) -> Task:
         start = time.time()
-        while time.time() - start < timeout:
-            task = self._client.task.retrieve(task.id)
-            if task.status == "ready":
+        while time.time() - start < timeout: # wait maximum 600sec
+            task = self._client.task.retrieve(task.id) #retrieve status
+            if task.status == "ready": # check if completed
                 if callback:
                     callback("Indexing complete!")
                 return task
@@ -119,11 +107,11 @@ class TwelveLabsClient:
             if callback:
                 elapsed = int(time.time() - start)
                 callback(f"Indexing in progress... ({elapsed}s)")
-            time.sleep(5)
+            time.sleep(5) # polling every 5 sec
         raise TimeoutError(f"TwelveLabs task timed out: {task.id}")
 
     def analyze_compliance(self, video_id: str) -> dict:
-        """Call /analyze endpoint directly (SDK generate is deprecated)."""
+        """Call /analyze endpoint directly."""
         resp = httpx.post(
             f"{API_BASE}/analyze",
             headers={"x-api-key": settings.twelvelabs_api_key},

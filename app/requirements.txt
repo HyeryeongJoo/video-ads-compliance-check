@@ -1,6 +1,5 @@
 streamlit==1.41.1
 twelvelabs==0.4.4
-yt-dlp==2024.12.23
 httpx==0.28.1
 boto3==1.36.7
 pydantic==2.10.5
