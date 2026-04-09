@@ -10,13 +10,13 @@ Below is a screenshot of an actual compliance analysis result after uploading a 
 
 When a video is uploaded, TwelveLabs' multimodal AI comprehensively analyzes the video's visuals, audio, and text to produce:
 
-- **Decision (APPROVE)**: Video is compliant with no policy violations and aligns with the campaign brief
-- **Campaign Relevance (90/100)**: High relevance confirmed as a makeup tutorial/product demo
+- **Decision (BLOCK)**: Explicit profanity detected in on-screen text, violating brand safety standards
+- **Campaign Relevance (80/100, ON-BRIEF)**: High relevance as beauty content, but blocked due to policy violation
 - **Video Description**: Auto-generated 2-5 sentence summary of the video content
 - **Decision Explanation**: Clear rationale for the decision, ready to share with the advertiser
-- **Policy Violations (5 categories)**: Individual severity ratings across all 5 policy categories
+- **Policy Violations (5 categories)**: Individual severity ratings across all 5 policy categories — `Profanity/Explicit Language: HIGH` detected with timestamp `[00:00 - 00:04]` and modality `(text_on_screen)` evidence
 
-In the example above, all categories returned `NONE`, resulting in an **APPROVE** decision.
+In the example above, a `HIGH` severity violation was detected in the Profanity category, resulting in a **BLOCK** decision.
 
 ---
 

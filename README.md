@@ -10,13 +10,13 @@ TwelveLabs API를 활용한 크리에이터 영상 광고 컴플라이언스 자
 
 비디오를 업로드하면 TwelveLabs의 멀티모달 AI가 영상의 시각, 음성, 텍스트를 종합 분석하여:
 
-- **Decision (APPROVE)**: 정책 위반 없이 캠페인 brief에 부합하는 영상으로 판정
-- **Campaign Relevance (90/100)**: 메이크업 튜토리얼/제품 데모로서 높은 관련성 확인
+- **Decision (BLOCK)**: 화면 내 욕설 텍스트가 감지되어 브랜드 안전성 기준 위반으로 차단 판정
+- **Campaign Relevance (80/100, ON-BRIEF)**: 뷰티 콘텐츠로서 캠페인 관련성은 높으나 정책 위반으로 차단
 - **Video Description**: 영상 내용을 2-5문장으로 자동 요약
 - **Decision Explanation**: 광고주에게 제공할 판정 근거를 명확히 서술
-- **Policy Violations (5 categories)**: 5개 정책 카테고리별 위반 여부와 심각도를 개별 표시
+- **Policy Violations (5 categories)**: 5개 정책 카테고리별 위반 여부와 심각도를 개별 표시 — `Profanity/Explicit Language: HIGH` 감지, 타임스탬프 `[00:00 - 00:04]` 및 모달리티 `(text_on_screen)` 증거 포함
 
-위 예시에서는 모든 카테고리가 `NONE`으로 위반 사항이 없어 **APPROVE** 판정이 내려졌습니다.
+위 예시에서는 Profanity 카테고리에서 `HIGH` 심각도 위반이 감지되어 **BLOCK** 판정이 내려졌습니다.
 
 ---
 
