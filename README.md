@@ -6,7 +6,7 @@ TwelveLabs API를 활용한 크리에이터 영상 광고 컴플라이언스 자
 
 아래는 화장품 메이크업 영상을 업로드하여 컴플라이언스 분석을 수행한 실제 결과 화면입니다.
 
-![Analyze Results](img/analyze_results_capture.png)
+![Analyze Results](img/block-result-capture.png)
 
 비디오를 업로드하면 TwelveLabs의 멀티모달 AI가 영상의 시각, 음성, 텍스트를 종합 분석하여:
 
@@ -75,19 +75,14 @@ index = self._client.index.create(
 
 ### 2. Task API — 비디오 업로드 및 인덱싱
 
-> **파일**: `app/twelvelabs_client.py` (`index_video`, `index_video_url`, `_wait_for_task` 메서드)
+> **파일**: `app/twelvelabs_client.py` (`index_video`, `_wait_for_task` 메서드)
 
 | 엔드포인트 | SDK 메서드 | 역할 |
 |---|---|---|
 | `POST /tasks` | `client.task.create(index_id, file=...)` | 로컬 파일을 업로드하여 인덱싱 |
-| `POST /tasks` | `client.task.create(index_id, url=...)` | URL에서 직접 비디오를 가져와 인덱싱 |
 | `GET /tasks/{id}` | `client.task.retrieve(task_id)` | 인덱싱 작업 상태 폴링 |
 
 **시나리오에서의 역할**: 사용자가 제출한 비디오를 TwelveLabs 플랫폼에 전송하고, Pegasus 모델이 비디오의 모든 프레임, 음성, 화면 텍스트를 분석하여 멀티모달 임베딩을 생성할 때까지 대기합니다. 이 단계가 완료되어야 Analyze API로 컴플라이언스 심사가 가능합니다.
-
-**두 가지 입력 방식을 지원**:
-- **파일 업로드** (`file` 파라미터): 사용자가 직접 업로드한 .mp4/.mov 등의 파일을 TwelveLabs로 전송
-- **URL 입력** (`url` 파라미터): 직접 비디오 URL(.mp4 링크)을 전달하면 TwelveLabs가 서버 사이드에서 비디오를 fetch
 
 **비동기 작업 폴링**: Task API는 비동기로 동작하므로, 5초 간격으로 `task.retrieve()`를 호출하여 `status`가 `ready`가 될 때까지 폴링합니다 (최대 600초 타임아웃). 인덱싱이 완료되면 `video_id`를 반환받아 다음 단계로 전달합니다.
 
@@ -131,7 +126,7 @@ resp = httpx.post(
 ### API 흐름 요약
 
 ```
-사용자가 비디오 업로드/URL 입력
+사용자가 비디오 업로드
          │
          ▼
 ┌─────────────────────────┐
@@ -143,7 +138,7 @@ resp = httpx.post(
              ▼
 ┌─────────────────────────┐
 │  2. Task API            │  비디오를 TwelveLabs에 전송
-│     task.create(file/url)│  → 멀티모달 임베딩 생성 대기
+│     task.create(file)   │  → 멀티모달 임베딩 생성 대기
 │     task.retrieve()     │  → status=ready 까지 폴링
 └────────────┬────────────┘
              │ video_id 반환
@@ -196,8 +191,6 @@ npx aws-cdk deploy --all
 | Method | Supported | How |
 |---|---|---|
 | File Upload (.mp4, .mov, .avi, .webm) | Yes | TwelveLabs Task API (file) |
-| Direct Video URL (.mp4) | Yes | TwelveLabs Task API (url) |
-| YouTube/Vimeo page URL | No | Platform bot detection blocks cloud IPs |
 
 ## Policy Categories (5)
 
