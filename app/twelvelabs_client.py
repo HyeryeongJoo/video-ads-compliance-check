@@ -82,10 +82,11 @@ class TwelveLabsClient:
 
     def index_video(self, video_path: str, callback=None) -> str:
         index_id = self._ensure_index()
-        task = self._client.tasks.create(
-            index_id=index_id,
-            video_file=video_path,
-        )
+        with open(video_path, "rb") as f:
+            task = self._client.tasks.create(
+                index_id=index_id,
+                video_file=f,
+            )
         if callback:
             callback(f"Video uploaded. Task ID: {task.id}. Waiting for indexing...")
         task = self._wait_for_task(task, callback=callback)
